@@ -31,9 +31,9 @@ class DiscordBot extends EventEmitter {
     }
     
     setupEventHandlers() {
-        this.client.on('ready', () => {
+        this.client.on('clientReady', () => {
             console.log(`✅ ${this.client.user.tag} is online!`);
-            this.emit('ready', this.client);
+            this.emit('clientReady', this.client);
         });
         
         this.client.on('messageCreate', (message) => {
