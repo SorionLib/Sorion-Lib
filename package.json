@@ -1,7 +1,7 @@
 {
   "name": "sorionlib",
-  "version": "0.1.3",
-  "description": "SorionLib - Modern JavaScript library starting with powerful Discord bot utilities",
+  "version": "0.1.5",
+  "description": "SorionLib - Modern JavaScript library starting with powerful Discord bot utilities, with slash commands, components, and legacy support",
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {

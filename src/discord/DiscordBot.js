@@ -17,12 +17,21 @@ class DiscordBot extends EventEmitter {
         this.components = new ComponentHandler(this);
         this.embeds = new EmbedBuilder();
         
-        // Auto-deploy slash commands
+        // Auto-deploy settings
         this.autoDeploy = options.autoDeploy !== false;
+        this.deployGuildId = options.deployGuildId; // Optional: specific guild
+        
+        // Token sofort setzen falls verfügbar
+        if (this.token) {
+            this.slash.setToken(this.token);
+        }
     }
     
     async login(token = this.token) {
         if (!token) throw new Error('No Discord token provided');
+        
+        this.token = token;
+        this.slash.setToken(token); // Token für Slash Commands setzen
         
         const { Client, GatewayIntentBits } = require('discord.js');
         this.client = new Client({
@@ -36,11 +45,9 @@ class DiscordBot extends EventEmitter {
         this.setupEventHandlers();
         await this.client.login(token);
         
-        // Slash Commands automatisch deployen
-        if (this.autoDeploy && this.client.user) {
-            setTimeout(() => {
-                this.slash.deployCommands(this.client.user.id);
-            }, 2000);
+        // Slash Commands automatisch deployen NACH dem Login
+        if (this.autoDeploy) {
+            this.setupSlashCommands();
         }
         
         return this;
@@ -57,11 +64,31 @@ class DiscordBot extends EventEmitter {
             this.commands.handleMessage(message);
         });
         
-        // Slash Command Handling
+        // Slash Command & Component Handling
         this.client.on('interactionCreate', (interaction) => {
             this.slash.handleInteraction(interaction);
             this.components.handleInteraction(interaction);
         });
+    }
+    
+    // Slash Commands setup (separate Funktion)
+    async setupSlashCommands() {
+        // Warte bis client ready ist
+        if (!this.client.user) {
+            setTimeout(() => this.setupSlashCommands(), 1000);
+            return;
+        }
+        
+        console.log('🚀 Setting up slash commands...');
+        await this.slash.deployCommands(this.client.user.id, this.deployGuildId);
+    }
+    
+    // MANUELLES Deploy falls gewünscht
+    async deploySlashCommands(guildId = null) {
+        if (!this.client.user) {
+            throw new Error('Client not ready. Call this after bot login.');
+        }
+        await this.slash.deployCommands(this.client.user.id, guildId);
     }
     
     // Prefix Commands (legacy)
