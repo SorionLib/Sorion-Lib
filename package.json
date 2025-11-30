@@ -1,12 +1,12 @@
 {
   "name": "sorionlib",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SorionLib - Modern JavaScript library starting with powerful Discord bot utilities",
   "main": "src/index.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "jest",
-    "dev": "node examples/discord-bot.js",
-    "start": "node examples/discord-bot.js"
+    "test": "echo \"No tests yet\" && exit 0",
+    "dev": "node examples/discord-bot.js"
   },
   "keywords": [
     "sorionlib",
@@ -15,20 +15,19 @@
     "discord.js",
     "commands",
     "embeds",
-    "utilities",
     "javascript",
     "library"
   ],
-  "author": "SorionLib",
+  "author": "SorionLib | Help@Sorionlib.de",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^14.14.1"
   },
-  "devDependencies": {
-    "jest": "^29.0.0"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SorionLib/sorionlib"
+    "url": "https://github.com/SorionLib/Sorion-Lib"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

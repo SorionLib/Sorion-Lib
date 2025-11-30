@@ -1,19 +1,18 @@
 const CommandHandler = require('./CommandHandler');
 const EmbedBuilder = require('./EmbedBuilder');
-const EventManager = require('./EventManager');
+const EventEmitter = require('events');
 
-class DiscordBot {
+class DiscordBot extends EventEmitter {
     constructor(options = {}) {
+        super();
         this.token = options.token;
         this.prefix = options.prefix || '!';
         this.client = null;
         
         this.commands = new CommandHandler(this);
         this.embeds = new EmbedBuilder();
-        this.events = new EventManager(this);
     }
     
-    // Initialize and login
     async login(token = this.token) {
         if (!token) throw new Error('No Discord token provided');
         
@@ -34,7 +33,7 @@ class DiscordBot {
     setupEventHandlers() {
         this.client.on('ready', () => {
             console.log(`✅ ${this.client.user.tag} is online!`);
-            this.events.emit('ready', this.client);
+            this.emit('ready', this.client);
         });
         
         this.client.on('messageCreate', (message) => {
@@ -43,19 +42,16 @@ class DiscordBot {
         });
     }
     
-    // Quick command registration
     command(name, callback, options = {}) {
         this.commands.register(name, callback, options);
         return this;
     }
     
-    // Quick event registration
     on(event, callback) {
-        this.events.on(event, callback);
+        super.on(event, callback);
         return this;
     }
     
-    // Get bot user
     get user() {
         return this.client?.user;
     }
