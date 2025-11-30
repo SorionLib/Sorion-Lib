@@ -1,4 +1,6 @@
 const CommandHandler = require('./CommandHandler');
+const SlashCommandHandler = require('./SlashCommandHandler');
+const ComponentHandler = require('./ComponentHandler');
 const EmbedBuilder = require('./EmbedBuilder');
 const EventEmitter = require('events');
 
@@ -9,8 +11,14 @@ class DiscordBot extends EventEmitter {
         this.prefix = options.prefix || '!';
         this.client = null;
         
+        // Handler
         this.commands = new CommandHandler(this);
+        this.slash = new SlashCommandHandler(this);
+        this.components = new ComponentHandler(this);
         this.embeds = new EmbedBuilder();
+        
+        // Auto-deploy slash commands
+        this.autoDeploy = options.autoDeploy !== false;
     }
     
     async login(token = this.token) {
@@ -27,6 +35,14 @@ class DiscordBot extends EventEmitter {
         
         this.setupEventHandlers();
         await this.client.login(token);
+        
+        // Slash Commands automatisch deployen
+        if (this.autoDeploy && this.client.user) {
+            setTimeout(() => {
+                this.slash.deployCommands(this.client.user.id);
+            }, 2000);
+        }
+        
         return this;
     }
     
@@ -40,15 +56,39 @@ class DiscordBot extends EventEmitter {
             if (message.author.bot) return;
             this.commands.handleMessage(message);
         });
+        
+        // Slash Command Handling
+        this.client.on('interactionCreate', (interaction) => {
+            this.slash.handleInteraction(interaction);
+            this.components.handleInteraction(interaction);
+        });
     }
     
+    // Prefix Commands (legacy)
     command(name, callback, options = {}) {
         this.commands.register(name, callback, options);
         return this;
     }
     
-    on(event, callback) {
-        super.on(event, callback);
+    // Slash Commands (modern)
+    slashCommand(commandData, callback) {
+        this.slash.register(commandData, callback);
+        return this;
+    }
+    
+    // Components
+    button(customId, callback) {
+        this.components.button(customId, callback);
+        return this;
+    }
+    
+    selectMenu(customId, callback) {
+        this.components.selectMenu(customId, callback);
+        return this;
+    }
+    
+    modal(customId, callback) {
+        this.components.modal(customId, callback);
         return this;
     }
     

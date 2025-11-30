@@ -1,38 +1,114 @@
-const SorionLib = require('../src');
+const SorionLib = require('sorionlib');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-// Create Discord bot instance
 const bot = new SorionLib.Discord({
-    prefix: '!'
+    prefix: '!', // Fallback für legacy commands
+    autoDeploy: true // Slash commands automatisch registrieren
 });
 
-// Register commands
-bot.command('ping', (message) => {
-    message.reply('🏓 Pong!');
+// ========================
+// SLASH COMMANDS (MODERN)
+// ========================
+
+bot.slashCommand({
+    name: 'ping',
+    description: 'Check bot latency'
+}, async (interaction) => {
+    await interaction.reply('🏓 Pong!');
 });
 
-bot.command('user', (message) => {
+bot.slashCommand({
+    name: 'userinfo',
+    description: 'Get user information',
+    options: [
+        {
+            name: 'user',
+            type: 6, // USER type
+            description: 'The user to get info about',
+            required: false
+        }
+    ]
+}, async (interaction) => {
+    const user = interaction.options.getUser('user') || interaction.user;
+    
     const embed = bot.embeds
-        .title('User Information')
-        .description(`Hello ${message.author.username}!`)
-        .addField('User ID', message.author.id)
-        .addField('Account Created', message.author.createdAt.toDateString())
-        .color('#0099ff')
+        .title('👤 User Information')
+        .description(`Info about **${user.username}**`)
+        .addField('ID', user.id, true)
+        .addField('Account Created', `<t:${Math.floor(user.createdTimestamp / 1000)}:R>`, true)
+        .thumbnail(user.displayAvatarURL())
+        .color('#5865F2')
         .build();
     
-    message.channel.send(embed);
+    await interaction.reply(embed);
 });
 
-bot.command('info', (message) => {
-    const embed = bot.embeds
-        .success(`SorionLib v${SorionLib.version} - Powerful Discord Utilities`)
-        .addField('Commands', 'ping, user, info')
-        .addField('Uptime', `${Math.round(process.uptime())}s`)
-        .build();
+bot.slashCommand({
+    name: 'buttons',
+    description: 'Test interactive buttons'
+}, async (interaction) => {
+    const row = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('primary-button')
+                .setLabel('Primary')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('success-button')
+                .setLabel('Success')
+                .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
+                .setCustomId('danger-button')
+                .setLabel('Danger')
+                .setStyle(ButtonStyle.Danger)
+        );
     
-    message.channel.send(embed);
+    await interaction.reply({
+        content: 'Here are some buttons:',
+        components: [row]
+    });
 });
 
-// Start the bot
-bot.login('YOUR_BOT_TOKEN_HERE')
-    .then(() => console.log('SorionLib Discord bot is starting...'))
-    .catch(console.error);
+// ========================
+// COMPONENT HANDLERS
+// ========================
+
+bot.button('primary-button', async (interaction) => {
+    await interaction.reply({ 
+        content: 'You clicked the primary button!', 
+        ephemeral: true 
+    });
+});
+
+bot.button('success-button', async (interaction) => {
+    await interaction.update({
+        content: '✅ Success button clicked!',
+        components: []
+    });
+});
+
+bot.button('danger-button', async (interaction) => {
+    await interaction.reply({ 
+        content: '🚨 Danger button clicked!', 
+        ephemeral: true 
+    });
+});
+
+// ========================
+// LEGACY PREFIX COMMANDS
+// ========================
+
+bot.command('legacy', (message) => {
+    message.reply('This is a legacy prefix command. Use `/commands` for modern slash commands!');
+});
+
+// ========================
+// EVENTS
+// ========================
+
+bot.on('clientReady', (client) => {
+    console.log(`✅ ${client.user.tag} ready with modern features!`);
+    client.user.setActivity('/help | SorionLib v2');
+});
+
+bot.login('YOUR_BOT_TOKEN');
