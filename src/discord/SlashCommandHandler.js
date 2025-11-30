@@ -4,17 +4,15 @@ class SlashCommandHandler {
     constructor(bot) {
         this.bot = bot;
         this.commands = new Map();
-        this.rest = null; // Wird später gesetzt
+        this.rest = null;
     }
     
-    // Token setzen wenn verfügbar
     setToken(token) {
         if (token && !this.rest) {
             this.rest = new REST({ version: '10' }).setToken(token);
         }
     }
     
-    // Slash Command registrieren
     register(commandData, callback) {
         this.commands.set(commandData.name, {
             data: commandData,
@@ -23,9 +21,7 @@ class SlashCommandHandler {
         return this;
     }
     
-    // Commands bei Discord registrieren
     async deployCommands(clientId, guildId = null) {
-        // Stelle sicher dass Token gesetzt ist
         if (!this.rest) {
             console.log('❌ Cannot deploy commands: No token set');
             return;
@@ -43,14 +39,12 @@ class SlashCommandHandler {
             
             let data;
             if (guildId) {
-                // Guild-specific commands (schneller)
                 data = await this.rest.put(
                     Routes.applicationGuildCommands(clientId, guildId),
                     { body: commands }
                 );
                 console.log(`✅ Deployed ${data.length} command(s) to guild ${guildId}`);
             } else {
-                // Global commands (kann bis zu 1 Stunde dauern)
                 data = await this.rest.put(
                     Routes.applicationCommands(clientId),
                     { body: commands }
@@ -62,7 +56,6 @@ class SlashCommandHandler {
         }
     }
     
-    // Slash Command handling
     handleInteraction(interaction) {
         if (!interaction.isChatInputCommand()) return;
         

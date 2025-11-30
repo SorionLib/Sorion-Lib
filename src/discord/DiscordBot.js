@@ -2,6 +2,7 @@ const CommandHandler = require('./CommandHandler');
 const SlashCommandHandler = require('./SlashCommandHandler');
 const ComponentHandler = require('./ComponentHandler');
 const EmbedBuilder = require('./EmbedBuilder');
+const ContainerBuilder = require('./ContainerBuilder');
 const EventEmitter = require('events');
 
 class DiscordBot extends EventEmitter {
@@ -19,9 +20,8 @@ class DiscordBot extends EventEmitter {
         
         // Auto-deploy settings
         this.autoDeploy = options.autoDeploy !== false;
-        this.deployGuildId = options.deployGuildId; // Optional: specific guild
+        this.deployGuildId = options.deployGuildId;
         
-        // Token sofort setzen falls verfügbar
         if (this.token) {
             this.slash.setToken(this.token);
         }
@@ -31,21 +31,21 @@ class DiscordBot extends EventEmitter {
         if (!token) throw new Error('No Discord token provided');
         
         this.token = token;
-        this.slash.setToken(token); // Token für Slash Commands setzen
+        this.slash.setToken(token);
         
         const { Client, GatewayIntentBits } = require('discord.js');
         this.client = new Client({
             intents: [
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMessages,
-                GatewayIntentBits.MessageContent
+                GatewayIntentBits.MessageContent,
+                GatewayIntentBits.GuildMembers
             ]
         });
         
         this.setupEventHandlers();
         await this.client.login(token);
         
-        // Slash Commands automatisch deployen NACH dem Login
         if (this.autoDeploy) {
             this.setupSlashCommands();
         }
@@ -64,16 +64,13 @@ class DiscordBot extends EventEmitter {
             this.commands.handleMessage(message);
         });
         
-        // Slash Command & Component Handling
         this.client.on('interactionCreate', (interaction) => {
             this.slash.handleInteraction(interaction);
             this.components.handleInteraction(interaction);
         });
     }
     
-    // Slash Commands setup (separate Funktion)
     async setupSlashCommands() {
-        // Warte bis client ready ist
         if (!this.client.user) {
             setTimeout(() => this.setupSlashCommands(), 1000);
             return;
@@ -83,12 +80,16 @@ class DiscordBot extends EventEmitter {
         await this.slash.deployCommands(this.client.user.id, this.deployGuildId);
     }
     
-    // MANUELLES Deploy falls gewünscht
     async deploySlashCommands(guildId = null) {
         if (!this.client.user) {
             throw new Error('Client not ready. Call this after bot login.');
         }
         await this.slash.deployCommands(this.client.user.id, guildId);
+    }
+    
+    // Container Builder
+    createContainer() {
+        return new ContainerBuilder();
     }
     
     // Prefix Commands (legacy)

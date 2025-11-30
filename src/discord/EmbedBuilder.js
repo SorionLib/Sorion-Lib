@@ -84,7 +84,7 @@ class EmbedBuilder {
     
     build() {
         const builtEmbed = { embeds: [this.embed] };
-        this.reset(); // Auto-reset after build
+        this.reset();
         return builtEmbed;
     }
 }

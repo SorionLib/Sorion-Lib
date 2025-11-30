@@ -1,19 +1,24 @@
 # SorionLib 🚀
 
-A modern JavaScript utility library starting with powerful Discord bot features. Clean, modular, and easy to use.
+Modern Discord library with Components V2, slash commands, and legacy support.
 
 ## Features ✨
 
-### 🤖 Discord Utilities
-- **Command Handler** - Easy command registration with cooldowns
-- **Embed Builder** - Beautiful embeds with chainable methods
-- **Event Manager** - Custom event handling system
-- **Zero Boilerplate** - Get started in minutes
+### 🤖 Modern Components V2
+- ContainerBuilder for modern UI
+- Text Display components
+- Sections with accessories
+- Action Rows with select menus
 
-### 🔧 Core Utilities
-- Validation helpers
-- Formatting utilities
-- Common JavaScript helpers
+### ⚡ Slash Commands
+- Easy command registration
+- Auto-deployment
+- Guild-specific commands
+
+### 🎨 Traditional Features
+- Embed Builder
+- Legacy prefix commands
+- Component handlers
 
 ## Installation 📦
 
