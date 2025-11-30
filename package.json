@@ -1,0 +1,16 @@
+{
+  "name": "sorionlib",
+  "version": "0.1.0",
+  "description": " A lightweight, modern JavaScript library for efficient DOM manipulation and web development",
+  "main": "src/sorionlib.js",
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
