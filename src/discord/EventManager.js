@@ -26,5 +26,4 @@ class EventManager extends EventEmitter {
     }
 }
 
-// WICHTIG: Korrekter Export - nur die Klasse exportieren
 module.exports = EventManager;

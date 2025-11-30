@@ -1,4 +1,3 @@
-// Core utilities that can be used across different modules
 class Utilities {
     static validateOptions(options, defaults) {
         return { ...defaults, ...options };
