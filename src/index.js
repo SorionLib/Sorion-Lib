@@ -4,18 +4,14 @@ const ContainerBuilder = require('./builders/ContainerBuilder');
 const CommandManager = require('./managers/CommandManager');
 const DatabaseManager = require('./managers/DatabaseManager');
 const Logger = require('./utils/Logger');
-
-/**
- * Haupt-SorionLib Klasse - Der Core der Discord Library
- */
 class SorionLib {
     /**
-     * @param {Object} options - Konfigurationsoptionen für die Library
-     * @param {string} options.token - Discord Bot Token
-     * @param {string[]} options.intents - Discord Intents
-     * @param {Object} options.database - Datenbank Konfiguration
-     * @param {boolean} options.debug - Debug Modus
-     * @param {Object} options.eventManager - Event Manager Optionen
+     * @param {Object} options
+     * @param {string} options.token 
+     * @param {string[]} options.intents 
+     * @param {Object} options.database
+     * @param {boolean} options.debug 
+     * @param {Object} options.eventManager 
      */
     constructor(options = {}) {
         this.options = this._validateOptions(options);
