@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const EventManager = require('./managers/EventManager');
 const ContainerBuilder = require('./builders/ContainerBuilder');
-const CommandManager = require('./managers/CommandManager');
+const CommandManager = require('./managers/CommandManager.js');
 const DatabaseManager = require('./managers/DatabaseManager');
 const Logger = require('./utils/Logger');
 class SorionLib {
