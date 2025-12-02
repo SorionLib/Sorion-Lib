@@ -24,8 +24,17 @@ Modern Discord library with Components V2, slash commands, and legacy support.
 
 ```bash
 npm install sorionlib
+<<<<<<< HEAD
 ```
 
 ```bash
 pnpm install sorionlib
 ```
+=======
+
+```bash
+yarn install sorionlib
+
+```bash
+npm install sorionlib
+>>>>>>> 0a23bb2ca046bb70bd05d808d2b0efab0f753467
